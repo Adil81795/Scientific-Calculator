@@ -30,7 +30,16 @@ const Calculator = () => {
 
     if (value === '=') {
       try {
-        const result = math.evaluate(display.replace('÷', '/').replace('×', '*'));
+        let expr = display.replace('÷', '/').replace('×', '*');
+
+        if (degreeMode) {
+          expr = expr.replace(/sin\(/g, 'sin(');
+          expr = expr.replace(/cos\(/g, 'cos(');
+          expr = expr.replace(/tan\(/g, 'tan(');
+          expr = `(${expr} * (pi / 180))`; // Convert degrees to radians
+        }
+
+        const result = math.evaluate(expr);
         setDisplay(result.toString());
         if (display.includes('2') && display.includes('6')) {
           setShowConfetti(true);
@@ -48,32 +57,32 @@ const Calculator = () => {
     }
 
     if (value === 'x^2') {
-      setDisplay((prev) => `${prev}^2`);
+      setDisplay((prev) => `(${prev})^2`);
       return;
     }
 
     if (value === 'x^3') {
-      setDisplay((prev) => `${prev}^3`);
+      setDisplay((prev) => `(${prev})^3`);
       return;
     }
 
     if (value === 'x^y') {
-      setDisplay((prev) => `${prev}^`);
+      setDisplay((prev) => `(${prev})^`);
       return;
     }
 
     if (value === '2√x') {
-      setDisplay((prev) => `${prev}^(1/2)`);
+      setDisplay((prev) => `(${prev})^(1/2)`);
       return;
     }
 
     if (value === '3√x') {
-      setDisplay((prev) => `${prev}^(1/3)`);
+      setDisplay((prev) => `(${prev})^(1/3)`);
       return;
     }
 
     if (value === 'y√x') {
-      setDisplay((prev) => `${prev}^(1/)`);
+      setDisplay((prev) => `(${prev})^(1/)`);
       return;
     }
 
@@ -88,24 +97,23 @@ const Calculator = () => {
     }
 
     if (value === 'e^x') {
-      setDisplay((prev) => `e^${prev}`);
+      setDisplay((prev) => `e^(${prev})`);
       return;
     }
 
     if (value === '10^x') {
-      setDisplay((prev) => `10^${prev}`);
+      setDisplay((prev) => `10^(${prev})`);
       return;
     }
-
-    if (value === 'sin' || value === 'cos' || value === 'tan') {
-      setDisplay((prev) => `${value}(${prev})`);
+    if (value === 'sin' || value === 'cos' || value === 'tan' || value === 'sinh' || value === 'cosh' || value === 'tanh') {
+      if (degreeMode && (value === 'sin' || value === 'cos' || value === 'tan')) {
+        setDisplay((prev) => `(${value}(${prev} * (pi / 180)))`);
+      } else {
+        setDisplay((prev) => `(${value}(${prev}))`);
+      }
       return;
     }
-
-    if (value === 'sinh' || value === 'cosh' || value === 'tanh') {
-      setDisplay((prev) => `${value}(${prev})`);
-      return;
-    }
+    
 
     if (value === 'π') {
       setDisplay((prev) => prev + 'π');
@@ -123,17 +131,28 @@ const Calculator = () => {
     }
 
     if (value === 'Rad') {
-      setDegreeMode(!degreeMode);
+      setDegreeMode((prevMode) => !prevMode); // Toggle between degree and radian mode
       return;
     }
 
     if (value === 'x!') {
       try {
-        const result = math.factorial(math.evaluate(display));
+        const result = math.evaluate(`factorial(${display})`);
         setDisplay(result.toString());
       } catch {
         setDisplay('Error');
       }
+      return;
+    }
+
+    if (value === '+/-') {
+      setDisplay((prev) => {
+        if (prev.startsWith('-')) {
+          return prev.slice(1); // Remove the negative sign if already present
+        } else {
+          return '-' + prev; // Add a negative sign if not present
+        }
+      });
       return;
     }
 
