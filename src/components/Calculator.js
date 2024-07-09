@@ -32,7 +32,7 @@ const Calculator = () => {
       try {
         let expr = display.replace('÷', '/').replace('×', '*');
 
-        // Convert trigonometric functions from degrees to radians if in degree mode
+        // Converting trigonometric functions from degrees to radians if in degree mode
         if (degreeMode) {
           expr = expr.replace(/sin\(([^)]+)\)/g, (match, p1) => `sin(${p1} * pi / 180)`);
           expr = expr.replace(/cos\(([^)]+)\)/g, (match, p1) => `cos(${p1} * pi / 180)`);
