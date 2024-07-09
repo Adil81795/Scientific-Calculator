@@ -32,11 +32,11 @@ const Calculator = () => {
       try {
         let expr = display.replace('÷', '/').replace('×', '*');
 
+        // Convert trigonometric functions from degrees to radians if in degree mode
         if (degreeMode) {
-          expr = expr.replace(/sin\(/g, 'sin(');
-          expr = expr.replace(/cos\(/g, 'cos(');
-          expr = expr.replace(/tan\(/g, 'tan(');
-          expr = `(${expr} * (pi / 180))`; // Convert degrees to radians
+          expr = expr.replace(/sin\(([^)]+)\)/g, (match, p1) => `sin(${p1} * pi / 180)`);
+          expr = expr.replace(/cos\(([^)]+)\)/g, (match, p1) => `cos(${p1} * pi / 180)`);
+          expr = expr.replace(/tan\(([^)]+)\)/g, (match, p1) => `tan(${p1} * pi / 180)`);
         }
 
         const result = math.evaluate(expr);
@@ -105,18 +105,15 @@ const Calculator = () => {
       setDisplay((prev) => `10^(${prev})`);
       return;
     }
+
+    // Handle trigonometric functions
     if (value === 'sin' || value === 'cos' || value === 'tan' || value === 'sinh' || value === 'cosh' || value === 'tanh') {
-      if (degreeMode && (value === 'sin' || value === 'cos' || value === 'tan')) {
-        setDisplay((prev) => `(${value}(${prev} * (pi / 180)))`);
-      } else {
-        setDisplay((prev) => `(${value}(${prev}))`);
-      }
+      setDisplay((prev) => `${value}(${prev})`);
       return;
     }
-    
 
     if (value === 'π') {
-      setDisplay((prev) => prev + 'π');
+      setDisplay((prev) => prev + 'pi');
       return;
     }
 
