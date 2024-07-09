@@ -1,4 +1,3 @@
-// src/components/Calculator.js
 import React, { useState } from 'react';
 import { create, all } from 'mathjs';
 import ConfettiExplosion from 'react-confetti-explosion';
@@ -31,7 +30,7 @@ const Calculator = () => {
 
     if (value === '=') {
       try {
-        const result = math.evaluate(display);
+        const result = math.evaluate(display.replace('÷', '/').replace('×', '*'));
         setDisplay(result.toString());
         if (display.includes('2') && display.includes('6')) {
           setShowConfetti(true);
